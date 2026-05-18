@@ -618,7 +618,7 @@
 </div>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz_7Fhd37FSGDanFNLBEt8doTARGf6fFEDpeHFtD_jC10Ke_5erYD8HUn8aIgC6kQVEJA/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz-J9b-hazCs5eko8k-uEUC5JHzHbxwdJ9MUK9wtPLfCA6mbJmNETUfFhW_Mq8_6rpapg/exec';
 
 let current = 1;
 const total = 7;
@@ -710,8 +710,9 @@ function submitForm() {
   const payload = new FormData();
   Object.entries(answers).forEach(([k, v]) => payload.append(k, v));
 
-  fetch(SCRIPT_URL, { method: 'POST', body: payload, mode: 'no-cors' }).catch(() => {});
-
+  if (SCRIPT_URL !== 'TU_APPS_SCRIPT_URL_AQUI') {
+    fetch(SCRIPT_URL, { method: 'POST', body: payload }).catch(() => {});
+  }
 }
 
 function copyCode() {
