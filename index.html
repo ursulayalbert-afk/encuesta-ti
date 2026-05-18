@@ -710,7 +710,8 @@ function submitForm() {
   const payload = new FormData();
   Object.entries(answers).forEach(([k, v]) => payload.append(k, v));
 
-  fetch(SCRIPT_URL, { method: 'POST', body: payload }).catch(() => {});
+  fetch(SCRIPT_URL, { method: 'POST', body: payload, mode: 'no-cors' }).catch(() => {});
+
 }
 
 function copyCode() {
