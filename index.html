@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Encuesta · Triple Intención</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --tierra: #2C1A0E;
+    --turquesa: #5B8C7E;
+    --arena: #C4A882;
+    --salmon: #E8927A;
+    --blanco: #FAFAF5;
+    --tierra-suave: #6B4226;
+    --arena-claro: #EDE0CE;
+    --fondo: #F5EFE6;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Jost', sans-serif;
+    background-color: var(--fondo);
+    color: var(--tierra);
+    min-height: 100vh;
+    font-weight: 300;
+    letter-spacing: 0.01em;
+  }
+
+  .hero {
+    background-color: var(--tierra);
+    padding: 60px 24px 80px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; left: 50%;
+    transform: translateX(-50%);
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    border: 1px solid rgba(196,168,130,0.15);
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    top: -30px; left: 50%;
+    transform: translateX(-50%);
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    border: 1px solid rgba(196,168,130,0.1);
+  }
+
+  .logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--arena);
+    margin-bottom: 40px;
+    display: block;
+  }
+
+  .hero h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(36px, 7vw, 56px);
+    font-weight: 300;
+    color: var(--blanco);
+    line-height: 1.15;
+    margin-bottom: 20px;
+    position: relative;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    color: var(--arena);
+  }
+
+  .hero p {
+    font-size: 15px;
+    color: rgba(250,250,245,0.65);
+    max-width: 480px;
+    margin: 0 auto;
+    line-height: 1.8;
+    font-weight: 300;
+  }
+
+  .gift-banner {
+    background-color: var(--turquesa);
+    padding: 20px 24px;
+    text-align: center;
+  }
+
+  .gift-banner p {
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    color: var(--blanco);
+    font-weight: 400;
+  }
+
+  .gift-banner strong {
+    font-weight: 500;
+  }
+
+  .form-container {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 60px 24px 80px;
+  }
+
+  .step-indicator {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 48px;
+    justify-content: center;
+  }
+
+  .step-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--arena-claro);
+    transition: all 0.3s ease;
+  }
+
+  .step-dot.active {
+    background: var(--turquesa);
+    width: 24px;
+    border-radius: 3px;
+  }
+
+  .step-dot.done {
+    background: var(--arena);
+  }
+
+  .question-block {
+    display: none;
+    animation: fadeIn 0.4s ease;
+  }
+
+  .question-block.visible {
+    display: block;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .q-number {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--arena);
+    margin-bottom: 12px;
+    font-weight: 400;
+  }
+
+  .q-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(22px, 4vw, 28px);
+    font-weight: 400;
+    color: var(--tierra);
+    line-height: 1.3;
+    margin-bottom: 8px;
+  }
+
+  .q-hint {
+    font-size: 13px;
+    color: var(--tierra-suave);
+    opacity: 0.7;
+    margin-bottom: 32px;
+    font-style: italic;
+  }
+
+  .options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 40px;
+  }
+
+  .option-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 20px;
+    border: 1px solid rgba(196,168,130,0.4);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: var(--blanco);
+    user-select: none;
+  }
+
+  .option-item:hover {
+    border-color: var(--turquesa);
+    background: rgba(91,140,126,0.04);
+  }
+
+  .option-item.selected {
+    border-color: var(--turquesa);
+    background: rgba(91,140,126,0.08);
+  }
+
+  .option-check {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(196,168,130,0.6);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+  }
+
+  .option-item.selected .option-check {
+    background: var(--turquesa);
+    border-color: var(--turquesa);
+  }
+
+  .option-check::after {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--blanco);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .option-item.selected .option-check::after {
+    opacity: 1;
+  }
+
+  .option-item.multi .option-check {
+    border-radius: 3px;
+  }
+
+  .option-label {
+    font-size: 15px;
+    color: var(--tierra);
+    font-weight: 300;
+    line-height: 1.4;
+  }
+
+  .open-textarea {
+    width: 100%;
+    min-height: 140px;
+    border: 1px solid rgba(196,168,130,0.4);
+    border-radius: 4px;
+    padding: 16px 20px;
+    font-family: 'Jost', sans-serif;
+    font-size: 15px;
+    font-weight: 300;
+    color: var(--tierra);
+    background: var(--blanco);
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.2s ease;
+    margin-bottom: 40px;
+    line-height: 1.7;
+  }
+
+  .open-textarea::placeholder {
+    color: rgba(44,26,14,0.35);
+    font-style: italic;
+  }
+
+  .open-textarea:focus {
+    border-color: var(--turquesa);
+  }
+
+  .nav-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .btn-back {
+    background: none;
+    border: none;
+    font-family: 'Jost', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--arena);
+    cursor: pointer;
+    padding: 0;
+    font-weight: 400;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+  }
+
+  .btn-back:hover { opacity: 1; }
+
+  .btn-next {
+    background: var(--tierra);
+    color: var(--blanco);
+    border: none;
+    font-family: 'Jost', sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 400;
+    padding: 16px 36px;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    flex: 1;
+    max-width: 260px;
+  }
+
+  .btn-next:hover { background: var(--tierra-suave); }
+  .btn-next:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  .progress-bar {
+    height: 2px;
+    background: var(--arena-claro);
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--turquesa);
+    transition: width 0.4s ease;
+  }
+
+  .thankyou {
+    display: none;
+    text-align: center;
+    padding: 80px 24px;
+    max-width: 560px;
+    margin: 0 auto;
+    animation: fadeIn 0.6s ease;
+  }
+
+  .thankyou.visible { display: block; }
+
+  .thankyou-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 32px;
+    border: 1px solid var(--arena);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .thankyou-icon svg {
+    width: 28px;
+    height: 28px;
+    stroke: var(--arena);
+    fill: none;
+    stroke-width: 1.5;
+  }
+
+  .thankyou h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(28px, 5vw, 40px);
+    font-weight: 300;
+    color: var(--tierra);
+    line-height: 1.2;
+    margin-bottom: 20px;
+  }
+
+  .thankyou h2 em {
+    font-style: italic;
+    color: var(--turquesa);
+  }
+
+  .thankyou p {
+    font-size: 15px;
+    color: var(--tierra-suave);
+    line-height: 1.9;
+    margin-bottom: 16px;
+    font-weight: 300;
+  }
+
+  .code-box {
+    background: var(--tierra);
+    border-radius: 4px;
+    padding: 28px 32px;
+    margin: 40px 0;
+    text-align: center;
+  }
+
+  .code-label {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--arena);
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .code-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 36px;
+    font-weight: 400;
+    color: var(--blanco);
+    letter-spacing: 0.15em;
+    display: block;
+    margin-bottom: 16px;
+  }
+
+  .code-warning {
+    font-size: 12px;
+    color: rgba(250,250,245,0.5);
+    font-style: italic;
+    line-height: 1.6;
+  }
+
+  .code-copy {
+    margin-top: 16px;
+    background: rgba(250,250,245,0.1);
+    border: 1px solid rgba(250,250,245,0.2);
+    color: var(--blanco);
+    font-family: 'Jost', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 10px 24px;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .code-copy:hover { background: rgba(250,250,245,0.18); }
+  .code-copy.copied { background: rgba(91,140,126,0.4); border-color: var(--turquesa); }
+
+  .max-note {
+    font-size: 12px;
+    color: var(--tierra-suave);
+    opacity: 0.6;
+    font-style: italic;
+    margin-top: -28px;
+    margin-bottom: 24px;
+  }
+
+  @media (max-width: 480px) {
+    .hero { padding: 48px 20px 64px; }
+    .form-container { padding: 48px 20px 64px; }
+    .btn-next { max-width: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:14%"></div></div>
+
+<section class="hero">
+  <span class="logo">Triple Intención</span>
+  <h1>Tu opinión<br><em>lo cambia todo</em></h1>
+  <p>Queremos hacer las cosas mejor. Y para eso, necesitamos escucharte a ti. Son 7 preguntas. Menos de 3 minutos.</p>
+</section>
+
+<div class="gift-banner">
+  <p>Por participar, recibirás un <strong>regalo en tu próximo pedido</strong> · Anónima y sin registro</p>
+</div>
+
+<div class="form-container" id="formContainer">
+
+  <div class="step-indicator" id="stepIndicator"></div>
+
+  <form id="surveyForm">
+
+    <div class="question-block visible" id="q1">
+      <p class="q-number">Pregunta 1 de 7</p>
+      <h2 class="q-text">¿Con qué frecuencia usas los productos de Triple Intención?</h2>
+      <div class="options-list" data-type="single" data-name="frecuencia">
+        <label class="option-item"><span class="option-check"></span><span class="option-label">A diario o casi a diario</span></label>
+        <label class="option-item"><span class="option-check"></span><span class="option-label">Varias veces a la semana</span></label>
+        <label class="option-item"><span class="option-check"></span><span class="option-label">Una vez a la semana aproximadamente</span></label>
+        <label class="option-item"><span class="option-check"></span><span class="option-label">Solo en momentos especiales</span></label>
+        <label class="option-item"><span class="option-check"></span><span class="option-label">La verdad es que los uso poco</span></label>
+      </div>
+      <div class="nav-row">
+        <span></span>
+        <button type="button" class="btn-next" id="next1" disabled>Siguiente</button>
+      </div>
+    </div>
+
+    <div class="question-block" id="q2">
+      <p class="q-number">Pregunta 2 de 7</p>
+      <h2 class="q-text">¿Para qué usas principalmente los productos?</h2>
+      <p class="q-hint">Puedes elegir hasta 3 opciones</p>
+      <div class="options-list" data-type="multi" data-max="3" data-name="uso">
+        <label class="option-item multi"><span class="option-check"></span><span class="option-label">Para crear un momento de pausa en el día</span></label>
+        <label class="option-item multi"><span class="option-check"></span><span class="option-label">Para mi espacio de meditación o yoga</span></label>
+        <label class="option-item multi"><span class="option-check"></span><span class="option-label">Para el ambiente del hogar</span></label>
+        <label class="option-item multi"><span class="option-check"></span><span class="option-label">Para relajarme antes de dormir</span></label>
+        <label class="option-item multi"><span class="option-check"></span><span class="option-label">Como parte de un ritual propio</span></label>
+        <label class="option-item multi"><span class="option-check"></span><span class="option-label">Para regalar</span></label>
+        <label class="option-item multi"><span class="option-check"></span><span class="option-label">No tengo un uso fijo</span></label>
+      </div>
+      <p class="max-note" id="maxNote2"></p>
+      <div class="nav-row">
+        <button type="button" class="btn-back" onclick="goTo(1)">← Anterior</button>
+        <button type="button" class="btn-next" id="next2" disabled>Siguiente</button>
+      </div>
+    </div>
+
+    <div class="question-block" id="q3">
+      <p class="q-number">Pregunta 3 de 7</p>
+      <h2 class="q-text">¿Qué es lo que más valoras de Triple Intención?</h2>
+      <p class="q-hint">Elige hasta 2 opciones</p>
+      <div class="options-list" data-type="multi" data-max="2" data-name="valor">
+        <label class="option-item multi"><span class="option-check"></span><span class="option-label">La calidad del producto</span></label>
+        <label class="option-item multi"><span class="option-check"></span><span class="option-label">La honestidad en la comunicación</span></label>
+        <label class="option-item multi"><span class="option-check"></span><span class="option-label">El packaging y la presentación</span></label>
+        <label class="option-item multi"><span class="option-check"></span><span class="option-label">Que sea artesanal y de taller propio</span></label>
+        <label class="option-item multi"><span class="option-check"></span><span class="option-label">El olor o la sensación al usarlo</span></label>
+        <label class="option-item multi"><span class="option-check"></span><span class="option-label">El trato y la atención recibida</span></label>
+        <label class="option-item multi"><span class="option-check"></span><span class="option-label">Los valores de la marca</span></label>
+      </div>
+      <p class="max-note" id="maxNote3"></p>
+      <div class="nav-row">
+        <button type="button" class="btn-back" onclick="goTo(2)">← Anterior</button>
+        <button type="button" class="btn-next" id="next3" disabled>Siguiente</button>
+      </div>
+    </div>
+
+    <div class="question-block" id="q4">
+      <p class="q-number">Pregunta 4 de 7</p>
+      <h2 class="q-text">¿Hay algo que te haya decepcionado<br>o que mejorarías?</h2>
+      <p class="q-hint">Si todo va bien, puedes dejarlo en blanco</p>
+      <textarea class="open-textarea" id="mejora" placeholder="Cuéntanos con total libertad. Tu opinión, por incómoda que parezca, es la que más nos ayuda a mejorar."></textarea>
+      <div class="nav-row">
+        <button type="button" class="btn-back" onclick="goTo(3)">← Anterior</button>
+        <button type="button" class="btn-next" id="next4">Siguiente</button>
+      </div>
+    </div>
+
+    <div class="question-block" id="q5">
+      <p class="q-number">Pregunta 5 de 7</p>
+      <h2 class="q-text">¿Has recomendado Triple Intención a alguien?</h2>
+      <div class="options-list" data-type="single" data-name="recomendacion">
+        <label class="option-item"><span class="option-check"></span><span class="option-label">Sí, a varias personas</span></label>
+        <label class="option-item"><span class="option-check"></span><span class="option-label">Sí, a alguna persona</span></label>
+        <label class="option-item"><span class="option-check"></span><span class="option-label">No todavía, pero lo haría</span></label>
+        <label class="option-item"><span class="option-check"></span><span class="option-label">No lo recomendaría</span></label>
+      </div>
+      <div class="nav-row">
+        <button type="button" class="btn-back" onclick="goTo(4)">← Anterior</button>
+        <button type="button" class="btn-next" id="next5" disabled>Siguiente</button>
+      </div>
+    </div>
+
+    <div class="question-block" id="q6">
+      <p class="q-number">Pregunta 6 de 7</p>
+      <h2 class="q-text">¿Qué te gustaría que lanzáramos o ampliáramos?</h2>
+      <p class="q-hint">Puedes elegir varias opciones</p>
+      <div class="options-list" data-type="multi" data-name="lanzamiento">
+        <label class="option-item multi"><span class="option-check"></span><span class="option-label">Más variedades de velas</span></label>
+        <label class="option-item multi"><span class="option-check"></span><span class="option-label">Más minerales y cristales</span></label>
+        <label class="option-item multi"><span class="option-check"></span><span class="option-label">Kits o packs temáticos</span></label>
+        <label class="option-item multi"><span class="option-check"></span><span class="option-label">Ropa o textil con intención</span></label>
+        <label class="option-item multi"><span class="option-check"></span><span class="option-label">Cursos o contenido formativo</span></label>
+        <label class="option-item multi"><span class="option-check"></span><span class="option-label">Nada, estoy satisfecha con lo que hay</span></label>
+      </div>
+      <div class="nav-row">
+        <button type="button" class="btn-back" onclick="goTo(5)">← Anterior</button>
+        <button type="button" class="btn-next" id="next6" disabled>Siguiente</button>
+      </div>
+    </div>
+
+    <div class="question-block" id="q7">
+      <p class="q-number">Pregunta 7 de 7</p>
+      <h2 class="q-text">¿Cómo describirías tu relación con la espiritualidad?</h2>
+      <div class="options-list" data-type="single" data-name="espiritualidad">
+        <label class="option-item"><span class="option-check"></span><span class="option-label">Forma parte de mi rutina diaria</span></label>
+        <label class="option-item"><span class="option-check"></span><span class="option-label">Me interesa pero no tengo una rutina fija</span></label>
+        <label class="option-item"><span class="option-check"></span><span class="option-label">Soy curiosa pero un poco escéptica</span></label>
+        <label class="option-item"><span class="option-check"></span><span class="option-label">Lo vivo a mi manera, sin etiquetas</span></label>
+        <label class="option-item"><span class="option-check"></span><span class="option-label">Prefiero no definirlo</span></label>
+      </div>
+      <div class="nav-row">
+        <button type="button" class="btn-back" onclick="goTo(6)">← Anterior</button>
+        <button type="button" class="btn-next" id="next7" disabled>Enviar respuestas</button>
+      </div>
+    </div>
+
+  </form>
+
+  <div class="thankyou" id="thankyou">
+    <div class="thankyou-icon">
+      <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+    </div>
+    <h2>Gracias.<br><em>De verdad.</em></h2>
+    <p>Tu tiempo y tu honestidad son un regalo para nosotros. Cada respuesta nos ayuda a hacer las cosas un poco mejor.</p>
+    <p>Como prometimos, aquí tienes tu código regalo para tu próximo pedido:</p>
+
+    <div class="code-box">
+      <span class="code-label">Tu código</span>
+      <span class="code-value">ENCUESTA</span>
+      <p class="code-warning">Como la encuesta es completamente anónima,<br>no podemos enviártelo después. Guárdalo bien.</p>
+      <button class="code-copy" id="copyBtn" onclick="copyCode()">Copiar código</button>
+    </div>
+
+    <p style="font-size:13px; opacity:0.6; font-style:italic;">Introduce el código en el checkout de tripleintencion.com y añadiremos tu regalo en el pedido.</p>
+  </div>
+
+</div>
+
+<script>
+const SCRIPT_URL = 'TU_APPS_SCRIPT_URL_AQUI';
+
+let current = 1;
+const total = 7;
+const answers = {};
+
+function buildDots() {
+  const ind = document.getElementById('stepIndicator');
+  ind.innerHTML = '';
+  for (let i = 1; i <= total; i++) {
+    const d = document.createElement('div');
+    d.className = 'step-dot' + (i === current ? ' active' : i < current ? ' done' : '');
+    ind.appendChild(d);
+  }
+}
+
+function updateProgress() {
+  document.getElementById('progressFill').style.width = ((current / total) * 100) + '%';
+  buildDots();
+}
+
+function goTo(n) {
+  document.getElementById('q' + current).classList.remove('visible');
+  current = n;
+  document.getElementById('q' + current).classList.add('visible');
+  updateProgress();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function initOptions() {
+  document.querySelectorAll('.options-list').forEach(list => {
+    const type = list.dataset.type;
+    const max = parseInt(list.dataset.max) || 999;
+    const name = list.dataset.name;
+    const items = list.querySelectorAll('.option-item');
+    const qNum = list.closest('.question-block').id.replace('q', '');
+    const nextBtn = document.getElementById('next' + qNum);
+    const maxNote = document.getElementById('maxNote' + qNum);
+
+    items.forEach(item => {
+      item.addEventListener('click', () => {
+        if (type === 'single') {
+          items.forEach(i => i.classList.remove('selected'));
+          item.classList.add('selected');
+          answers[name] = item.querySelector('.option-label').textContent;
+          if (nextBtn) nextBtn.disabled = false;
+        } else {
+          const selected = list.querySelectorAll('.option-item.selected');
+          if (item.classList.contains('selected')) {
+            item.classList.remove('selected');
+          } else {
+            if (selected.length < max) {
+              item.classList.add('selected');
+            }
+          }
+          const nowSelected = list.querySelectorAll('.option-item.selected');
+          answers[name] = Array.from(nowSelected).map(i => i.querySelector('.option-label').textContent).join(' | ');
+          if (nextBtn) nextBtn.disabled = nowSelected.length === 0;
+          if (maxNote) {
+            maxNote.textContent = nowSelected.length >= max ? 'Has alcanzado el máximo de opciones.' : '';
+          }
+        }
+      });
+    });
+  });
+}
+
+document.getElementById('next4').addEventListener('click', () => {
+  answers['mejora'] = document.getElementById('mejora').value || '(Sin respuesta)';
+  goTo(5);
+});
+
+for (let i = 1; i <= total; i++) {
+  const btn = document.getElementById('next' + i);
+  if (btn && i !== 4) {
+    btn.addEventListener('click', () => {
+      if (i < total) { goTo(i + 1); }
+      else { submitForm(); }
+    });
+  }
+}
+
+function submitForm() {
+  document.getElementById('formContainer').querySelector('form').style.display = 'none';
+  document.getElementById('stepIndicator').style.display = 'none';
+  document.getElementById('progressFill').style.width = '100%';
+  document.getElementById('thankyou').classList.add('visible');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  const payload = new FormData();
+  Object.entries(answers).forEach(([k, v]) => payload.append(k, v));
+
+  if (SCRIPT_URL !== 'TU_APPS_SCRIPT_URL_AQUI') {
+    fetch(SCRIPT_URL, { method: 'POST', body: payload }).catch(() => {});
+  }
+}
+
+function copyCode() {
+  navigator.clipboard.writeText('ENCUESTA').then(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = '¡Copiado!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Copiar código';
+      btn.classList.remove('copied');
+    }, 2500);
+  });
+}
+
+buildDots();
+initOptions();
+</script>
+</body>
+</html>
