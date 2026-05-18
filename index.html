@@ -710,9 +710,7 @@ function submitForm() {
   const payload = new FormData();
   Object.entries(answers).forEach(([k, v]) => payload.append(k, v));
 
-  if (SCRIPT_URL !== 'TU_APPS_SCRIPT_URL_AQUI') {
-    fetch(SCRIPT_URL, { method: 'POST', body: payload }).catch(() => {});
-  }
+  fetch(SCRIPT_URL, { method: 'POST', body: payload }).catch(() => {});
 }
 
 function copyCode() {
